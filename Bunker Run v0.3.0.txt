@@ -1,0 +1,18 @@
+Bunker Run v0.3.0 
+
+Each weapon now has a magazine: pistol 12 (unlimited reserve), shotgun 6, rifle 30. The HUD shows loaded/reserve, for example 12/∞.
+Tap RELOAD, or just keep firing on an empty magazine and it reloads for you. While reloading, the gun dips and tilts, the magazine drops out and a fresh one slides in, and the shotgun pumps.
+Ammo pickups now give a bit more: 6 shells and 30 rifle rounds.
+
+Modern weapon look
+The guns are redrawn as a slide pistol, a tactical pump shotgun and an assault rifle with an optic, all with cyan accent lights.
+The guns bob when you walk and kick back when you fire, with bigger muzzle flashes.
+It's all drawn with simple shapes rather than images, so it shouldn't slow your phone.
+
+Special ability: Shockwave
+
+The SPECIAL button fills like a gauge as you attack. Each enemy you hit adds charge, and a kill adds more. A shotgun blast that hits several enemies counts each one once.
+At 100% it glows and says READY. Tap it to blast everything within about 7 steps: it damages them and knocks them back. It kills most small enemies and badly hurts tanks.
+
+I chose Shockwave myself, so if you'd prefer something else, like slowing time, a damage boost or a health burst, tell me and I'll swap it in.
+
