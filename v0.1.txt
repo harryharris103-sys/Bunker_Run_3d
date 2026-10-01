@@ -1,0 +1,18 @@
+I built a first version called Bunker Run. It's a small first-person shooter you play in your phone's browser, with nothing to install. It draws at a low resolution, so your Tecno Spark 5 Air should handle it. It's untested on a real phone, so tell me if it lags.
+
+How to play:
+
+Drag your thumb on the left side of the screen to move.
+Drag on the right side to look around.
+Tap the red FIRE button to shoot.
+There are 6 guards in the bunker. Clear them all before your health runs out.
+
+I made assumptions about the setting and the controls. This is just a starting point, so we can change whatever you like. Some ideas for the next step:
+
+More weapons, like a shotgun or a machine gun
+More levels and bigger maps
+Different enemy types
+Sound effects
+Ammo pickups and health packs
+
+Which one should we add first?

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Bunker Run</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+html,body{margin:0;height:100%;background:#000;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;font-family:sans-serif}
+#c{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;object-fit:contain}
+#f{position:absolute;right:5%;bottom:10%;width:84px;height:84px;border-radius:50%;background:rgba(255,40,40,.45);border:3px solid #fff8;color:#fff;font:bold 15px sans-serif;display:flex;align-items:center;justify-content:center}
+#h{position:absolute;left:0;right:0;top:6px;text-align:center;color:#fff;font:bold 14px sans-serif;text-shadow:0 0 3px #000;pointer-events:none}
+#m{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;background:#000b;text-align:center;padding:20px}
+#m b{font-size:28px;margin-bottom:8px}
+</style></head><body>
+<canvas id="c"></canvas>
+<div id="h"></div>
+<div id="f">FIRE</div>
+<div id="m"><b>BUNKER RUN</b>Clear all the guards.<br>Left side: move &middot; Right side: look &middot; Red button: fire<br><br>Tap to start</div>
+<script>
+const W=320,H=180,c=document.getElementById('c'),g=c.getContext('2d');c.width=W;c.height=H;
+const M=["1111111111111111","1000000000000001","1000011000000001","1000010000110001","1000000000100001","1110001100000001","1000000100011101","1000000000000001","1001100000000001","1001000011100001","1000000010000001","1000111010000101","1000000000000101","1010000110000001","1000000000000001","1111111111111111"];
+const wall=(x,y)=>{x|=0;y|=0;return y<0||y>15||x<0||x>15||M[y][x]=='1'};
+let p,es,over,run=false,fire=false,cd=0,flash=0,hurt=0;
+function reset(){p={x:2.5,y:2.5,a:0.6,hp:100};es=[[13.5,2.5],[8.5,7.5],[13.5,13.5],[3.5,13.5],[11.5,9.5],[6.5,4.5]].map(([x,y])=>({x,y,hp:3,hit:0}));over=0}
+reset();
+// input
+const key={};let mv={x:0,y:0},tr=0,pts={};
+onkeydown=e=>{key[e.code]=1;if(e.code=='Space')fire=true};onkeyup=e=>{key[e.code]=0;if(e.code=='Space')fire=false};
+document.body.addEventListener('pointerdown',e=>{if(e.target.id=='f')return;if(!run){document.getElementById('m').style.display='none';run=true;if(over)reset();return}
+if(over){reset();return}
+pts[e.pointerId]={sx:e.clientX,sy:e.clientY,side:e.clientX<innerWidth/2?0:1,lx:e.clientX}});
+document.body.addEventListener('pointermove',e=>{const t=pts[e.pointerId];if(!t)return;
+if(t.side==0){mv.x=Math.max(-1,Math.min(1,(e.clientX-t.sx)/50));mv.y=Math.max(-1,Math.min(1,(e.clientY-t.sy)/50))}
+else{tr+=(e.clientX-t.lx)*0.012;t.lx=e.clientX}});
+const up=e=>{const t=pts[e.pointerId];if(t&&t.side==0){mv.x=mv.y=0}delete pts[e.pointerId]};
+document.body.addEventListener('pointerup',up);document.body.addEventListener('pointercancel',up);
+const fb=document.getElementById('f');fb.addEventListener('pointerdown',e=>{e.stopPropagation();fire=true;run=true;document.getElementById('m').style.display='none'});
+fb.addEventListener('pointerup',()=>fire=false);fb.addEventListener('pointercancel',()=>fire=false);
+// project helper
+function proj(x,y,dx,dy,px,py){const sx=x-p.x,sy=y-p.y,id=1/(px*dy-dx*py);return{tx:id*(dy*sx-dx*sy),ty:id*(-py*sx+px*sy)}}
+const zb=new Float32Array(W);
+function frame(t){requestAnimationFrame(frame);const dt=Math.min(.05,(t-(frame.l||t))/1000);frame.l=t;
+if(run&&!over)update(dt);draw()}
+function update(dt){
+let fw=-mv.y,st=mv.x;if(key.KeyW||key.ArrowUp)fw=1;if(key.KeyS||key.ArrowDown)fw=-1;if(key.KeyA)st=-1;if(key.KeyD)st=1;
+if(key.ArrowLeft)tr-=2.2*dt;if(key.ArrowRight)tr+=2.2*dt;
+p.a+=tr;tr=0;
+const dx=Math.cos(p.a),dy=Math.sin(p.a),s=2.6*dt;
+const mx=(dx*fw-dy*st)*s,my=(dy*fw+dx*st)*s;
+if(!wall(p.x+mx+Math.sign(mx)*.2,p.y))p.x+=mx;
+if(!wall(p.x,p.y+my+Math.sign(my)*.2))p.y+=my;
+cd-=dt;flash-=dt;hurt-=dt;
+if(fire&&cd<=0){cd=.28;flash=.08;shoot()}
+let alive=0;
+for(const e of es){if(e.hp<=0)continue;alive++;e.hit-=dt;
+const ex=p.x-e.x,ey=p.y-e.y,d=Math.hypot(ex,ey);
+if(d<9&&d>1.1){const nx=e.x+ex/d*.9*dt,ny=e.y+ey/d*.9*dt;if(!wall(nx,e.y))e.x=nx;if(!wall(e.x,ny))e.y=ny}
+if(d<=1.3){p.hp-=18*dt;hurt=.15}}
+if(p.hp<=0){over=1;msg('YOU DIED','Tap to try again')}
+else if(!alive){over=2;msg('YOU WIN!','Tap to play again')}
+document.getElementById('h').textContent='HP '+Math.max(0,Math.ceil(p.hp))+'   Guards left: '+alive}
+function msg(a,b){const m=document.getElementById('m');m.innerHTML='<b>'+a+'</b>'+b;m.style.display='flex'}
+function shoot(){const dx=Math.cos(p.a),dy=Math.sin(p.a),px=-dy*.66,py=dx*.66;let best=null,bd=99;
+for(const e of es){if(e.hp<=0)continue;const r=proj(e.x,e.y,dx,dy,px,py);if(r.ty<.2)continue;
+if(Math.abs(r.tx/r.ty)<.14&&r.ty<zb[W>>1]&&r.ty<bd){bd=r.ty;best=e}}
+if(best){best.hp--;best.hit=.15}}
+function draw(){
+g.fillStyle='#223';g.fillRect(0,0,W,H/2);g.fillStyle='#322';g.fillRect(0,H/2,W,H/2);
+const dx=Math.cos(p.a),dy=Math.sin(p.a),px=-dy*.66,py=dx*.66;
+for(let x=0;x<W;x++){const cx=2*x/W-1,rx=dx+px*cx,ry=dy+py*cx;
+let mx=p.x|0,my=p.y|0;const ddx=Math.abs(1/rx),ddy=Math.abs(1/ry);
+let sx,sy,sdx,sdy;if(rx<0){sx=-1;sdx=(p.x-mx)*ddx}else{sx=1;sdx=(mx+1-p.x)*ddx}
+if(ry<0){sy=-1;sdy=(p.y-my)*ddy}else{sy=1;sdy=(my+1-p.y)*ddy}
+let side=0,n=0;while(n++<32){if(sdx<sdy){sdx+=ddx;mx+=sx;side=0}else{sdy+=ddy;my+=sy;side=1}if(wall(mx,my))break}
+const d=Math.max(.05,side?sdy-ddy:sdx-ddx);zb[x]=d;
+const lh=H/d,v=(side?120:170)*Math.max(.2,1-d/12);
+g.fillStyle='rgb('+(v*.8|0)+','+(v*.85|0)+','+(v|0)+')';g.fillRect(x,H/2-lh/2,1,lh)}
+// sprites far->near
+const vis=es.filter(e=>e.hp>0).map(e=>({e,r:proj(e.x,e.y,dx,dy,px,py)})).filter(o=>o.r.ty>.15).sort((a,b)=>b.r.ty-a.r.ty);
+for(const{e,r}of vis){const sc=W/2*(1+r.tx/r.ty),sz=H/r.ty,hw=sz*.2,sh=Math.max(.3,1-r.ty/12);
+for(let x=Math.max(0,sc-hw|0);x<Math.min(W,sc+hw);x++){if(zb[x]<r.ty)continue;
+const col=e.hit>0?'#fff':'rgb('+(200*sh|0)+','+(40*sh|0)+','+(40*sh|0)+')';
+g.fillStyle=col;g.fillRect(x,H/2-sz*.3,1,sz*.8);
+g.fillStyle=e.hit>0?'#fff':'rgb('+(230*sh|0)+','+(180*sh|0)+','+(130*sh|0)+')';g.fillRect(x,H/2-sz*.5,1,sz*.2)}}
+if(hurt>0){g.fillStyle='rgba(255,0,0,.3)';g.fillRect(0,0,W,H)}
+// gun + crosshair
+g.fillStyle='#fff';g.fillRect(W/2-1,H/2-5,2,3);g.fillRect(W/2-1,H/2+2,2,3);g.fillRect(W/2-5,H/2-1,3,2);g.fillRect(W/2+2,H/2-1,3,2);
+g.fillStyle='#111';g.fillRect(W/2-6,H-34,12,34);g.fillStyle='#444';g.fillRect(W/2-4,H-34,8,34);
+if(flash>0){g.fillStyle='#fc3';g.fillRect(W/2-7,H-48,14,14)}}
+requestAnimationFrame(frame);
+</script></body></html>
