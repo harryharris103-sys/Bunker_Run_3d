@@ -1,0 +1,8 @@
+Bunker Run v0.2.0 
+
+What's new:
+Weapons: pistol (unlimited ammo), shotgun (5 pellets, slow, strong up close), and rifle (rapid fire). Tap SWAP to change weapons. If you run out of ammo, the game switches you back to the pistol.
+Enemy types: red grunts, fast yellow runners that hit less hard, blue shooters that keep their distance and fire at you, and big purple tanks that are slow but hit hard and take a lot of hits.
+Levels: level 1 is the same bunker as before. After that, the levels are endless, each bigger and harder than the last, with new enemy types appearing as you go.
+Pickups: green boxes restore health and orange boxes give shotgun and rifle ammo.
+Sound: shots, hits, damage, pickups, and level clear and death tones. Sound only starts after your first tap, because phones require that.
