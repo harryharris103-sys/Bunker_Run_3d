@@ -1,0 +1,20 @@
+Bunker Run v0.4.0 is live at the same link, so reload the page. I checked the code for errors, but I haven't played it on a phone, so tell me if anything looks or feels wrong.
+Reload sounds
+Each reload now plays a click when the magazine comes out, a thunk when the new one goes in, and a two-click bolt rack at the end.
+The shotgun plays shell-loading ticks instead of the magazine sounds.
+7 weapons (tap SWAP to cycle through them)
+Pistol has unlimited reserve ammo.
+Shotgun is slow and strong up close.
+M4 is an assault rifle.
+Vector is an SMG with a very high fire rate and a red-dot sight.
+AK-47 hits harder per bullet, with wood furniture and a curved magazine.
+P90 holds 50 rounds and has a see-through magazine on top.
+MP5 is a slim SMG with a forward grip.
+Each weapon has its own look, magazine size, reload time and sound. Ammo pickups now refill all of them.
+The fast guns charge your Shockwave special more slowly per hit, so it can't be spammed.
+Humanoid monsters
+The enemies now have heads, torsos, arms and legs, with glowing red eyes. Their legs swing when they walk.
+Grunts are green, runners are pale and lean, shooters are armored and carry a gun, and tanks are big purple brutes.
+The MONSTERS button in the top-right switches between HUMANOID and BLOCK. The game remembers your choice next time you open it.
+On a computer, keys 1–7 pick a weapon, R reloads, E uses the special, and H toggles the monster style.
+Test the humanoids on your Tecno and tell me whether the frame rate holds up. If it lags, we can simplify them. What would you like for v0.5.0?
